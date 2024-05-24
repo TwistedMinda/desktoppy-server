@@ -8,7 +8,7 @@ Welcome to our AI project's safe zone! This is a repository for storing and shar
 
 To get started, you'll need to install the necessary dependencies. You can do this by running the following commands:
 
-First create a virtual env (_and activate it_) and install dependencies in it.
+First create a virtual env (_[and activate it](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)_) and install dependencies in it.
 
 ```sh
 $ python3 -m venv myenv
