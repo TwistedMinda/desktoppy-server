@@ -14,8 +14,8 @@ def add_parser_instructions(prompt, directory):
     f"- filePath: The path of the file to be read, created, modified or deleted. \n"
     f"- query: The details of the action that should be done on the file, or in case of reading what information to extract, conserve all important information! \n"
     f"Other rules: \n"
-    f"- Cap your response to 200 characters. \n"
     f"- User folder base path is {directory}. \n"
+    f"- Use two actions (create FIRST + delete AFTER) to move files, and mentioning to reuse same content for new file (request be handled by another agent).\n"
     f"- Accessible files for reference: {','.join(filenames)}. \n"
     f"User request: {prompt}"
 )
