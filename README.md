@@ -18,7 +18,7 @@ $ python3 -m pip install -r requirements.txt
 Almost done!
 We'll now need our local model (LLama3 by default but feel free to change)
 
-[Download Ollama](https://ollama.com/download)
+[Install Ollama](https://ollama.com/download)
 
 Test your installation by installing the model of your choice
 
@@ -31,7 +31,17 @@ $ ollama pull llama3
 Once you have everything installed, you're ready to start exploring the world of AI! Simply run the main script or application and follow the prompts to begin.
 
 ```
-python3 main.py "Create a fancy file with a fancy name, code is allowed!"
+python3 server.py
+```
+
+You can use `curl` to test your installation, send a GET request from the terminal. Here's how you can do it:
+
+```sh
+$ curl --get \
+  --data-urlencode "folder=C:/Users/Julien/projects/ai/safe_zone/" \
+  --data-urlencode "prompt=Create a fancy file for me" \
+  --data-urlencode "file_paths=path/to/file1,path/to/file2" \
+  "http://localhost:5000/run-script"
 ```
 
 ## Web UI
