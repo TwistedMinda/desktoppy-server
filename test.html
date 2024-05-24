@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Python Script</title>
+</head>
+<body>
+    <input type="text" value="C:/Users/Julien/projects/ai/safe_zone/" id="folder" placeholder="Folder">
+    <input type="text" value="create a text file named lolipop" id="prompt" placeholder="Prompt...">
+    <input type="text" id="file_paths" placeholder="Image paths">
+    <button id="run-script">Run Python Script</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('run-script').addEventListener('click', () => {
+          const folder = document.getElementById('folder').value;
+          const prompt = document.getElementById('prompt').value;
+            const file_paths = document.getElementById('file_paths').value;
+            
+            const url = new URL('http://127.0.0.1:5000/run-script');
+            url.searchParams.append('folder', folder);
+            url.searchParams.append('prompt', prompt);
+            url.searchParams.append('file_paths', file_paths);
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('output').textContent = `Error: ${data.error}`;
+                    } else {
+                        document.getElementById('output').textContent = `Output: ${data}`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('output').textContent = `Fetch error: ${error.message}`;
+                });
+        });
+    </script>
+</body>
+</html>
