@@ -9,7 +9,10 @@ def add_parser_instructions(prompt, directory):
     f"You are an exceptional and forgiving parser. Your task is to extract the actions, files involved, and a summary of the action from the user request. \n"
     f"Respond only with a valid JSON. Double-check its validity meticulously. Do not include any code blocks. Your response should be like a real API. \n"
     f"1. 'response': Provide a clean response confirming that the requested actions have been applied. \n"
-    f"2. 'actions': An array of objects, each with an 'action' key containing one of ['create', 'delete', 'modify'], the associated 'filePath', and a 'query' key summarizing the action that will be done in the future, conserve all important informations. \n"
+    f"2. 'actions': An array of objects, each with:'\n"
+    f"- action: one of ['read','create', 'delete', 'modify'] \n"
+    f"- filePath: The path of the file to be read, created, modified or deleted. \n"
+    f"- query: The details of the action that should be done on the file, or in case of reading what information to extract, conserve all important information! \n"
     f"Other rules: \n"
     f"- Cap your response to 200 characters. \n"
     f"- User folder base path is {directory}. \n"
@@ -23,16 +26,22 @@ def add_parser_instructions(prompt, directory):
 
 def add_file_action_instructions(action, query, file_path):
   file_content = read_file(file_path)
-  detailed_prompt = (
-    f"You have been entrusted with a specialized task. Your first task is to extract the specific context about the file at {file_path} from the initial user request and provided content. \n"
+  conditional_message = (
     f"Your second task is to update the content for the action {action} of the file at {file_path} based on this extracted context, this is your most important task, do NOT provide any response about other files. \n"
     f"Respond ONLY with the file content to be saved."
     f"Do not confirm when you're done. DO NOT say anything, no commentary, no explanations, no code-blocks, do not use ``` or any similar syntax. You only give the file content\n"
     f"If the content is code, BE SURE to not include unrequested unit testing. \n"
+  ) if action != 'read' else (
+    f"You can be free of responding to the user as best as you can regarding his demand on the read action"
+  )
+
+  detailed_prompt = (
+    f"You have been entrusted with a specialized task. Your first task is to extract the specific context about the file at {file_path} from the initial user request and provided content. \n"
+    f"{conditional_message}"
     f"Focus exclusively on the specified file and disregard any other files or user requests. \n"
     f"Current file content: {file_content} \n"
     f"Initial user request: {query}"
-)
+  )
   # print(f"_______[Instructions {file_path}]________")
   # print(detailed_prompt)
   # print("_______________")
@@ -58,11 +67,14 @@ def extract_content(query, action, file_path):
 def dispatch_actions(prompt, actions, directory):
   pprint.pprint(actions, width=40, depth=3, indent=2, compact=False)
   for action in actions:
-    action_type = action.get('action')
+    action_type = action.get('action').strip()
     file_path = os.path.join(directory, action.get('filePath', ''))
     query = action.get('query')
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    if action_type == 'create':
+    if action_type == 'read':
+      content = extract_content(query, action_type, file_path)
+      print(">", content)
+    elif action_type == 'create':
       content = extract_content(query, action_type, file_path)
       create_file(file_path, content)
     elif action_type == 'modify':
