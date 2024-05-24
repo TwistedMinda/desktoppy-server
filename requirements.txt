@@ -1,4 +1,3 @@
 ollama
-argparse
 flask
 flask-cors

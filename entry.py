@@ -1,4 +1,3 @@
-import argparse
 from model import *
 from user_parser import *
 
