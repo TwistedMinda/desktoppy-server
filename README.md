@@ -11,8 +11,19 @@ To get started, you'll need to install the necessary dependencies. You can do th
 First create a virtual env (_and activate it_) and install dependencies in it.
 
 ```sh
-python3 -m venv myenv
-python3 -m pip install -r requirements.txt
+$ python3 -m venv myenv
+$ python3 -m pip install -r requirements.txt
+```
+
+Almost done!
+We'll now need our local model (LLama3 by default but feel free to change)
+
+[Download Ollama](https://ollama.com/download)
+
+Test your installation by installing the model of your choice
+
+```sh
+$ ollama pull llama3
 ```
 
 ## Launch
