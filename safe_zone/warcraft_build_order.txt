@@ -1,9 +1,0 @@
-Zergling->Hatchery->Spine Crawler->Lair->Queen+Hive
-Hatchery->Spine Crawler->Lair->Queen+Hive
-Hatchery->Spine Crawler->Lair->Queen+Hive
-Lings->Zerglings->Roaches->Hydralisks->Lurker
-Roaches->Hydralisks->Lurker->Corruptor->Defiler
-Mutalisk->Swarm Host->Infested Terran->Ultralisk->Brood Lord
-Spine Crawler->Egg->Queen+Hive
-Lair->Spawning Pool->High Templar->Immortal->Archon
-High Templar->Immortal->Archon->Observer->Dark Archon
