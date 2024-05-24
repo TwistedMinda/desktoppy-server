@@ -24,7 +24,7 @@ def main():
     f"Read and summarize the yolo file for me"
   )
   # args.prompt
-  run(user_input)
+  run(args.prompt)
 
   # Handle images
   for image_path in args.image_paths:
