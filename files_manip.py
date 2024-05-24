@@ -28,7 +28,6 @@ def modify_file(file_path, content):
 
 def move_file(source_path, destination_path):
   try:
-    print("try move", source_path, destination_path)
     os.rename(source_path, destination_path)
   except Exception as e:
     print(e)

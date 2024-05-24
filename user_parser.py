@@ -42,6 +42,7 @@ def add_file_action_instructions(action, query, file_path):
   elif action == 'modify':
     return (
       f"Your first task is to modify the file at {file_path} to fulfill user request. \n"
+      f"Do not confirm when you're done. DO NOT say anything, no commentary, no explanations, no code-blocks, do not use ``` or any similar syntax. You only give the file content\n"
       f"Current file content: {file_content} \n"
       f"User request: {query}"
     )
