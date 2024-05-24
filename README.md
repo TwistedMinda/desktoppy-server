@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to our AI project's safe zone! This is a repository for storing and sharing code related to artificial intelligence.
+Welcome to our AI project's safe zone! Link a directory, your safe zone, and start interacting with the AI to manipulate the files with you.
 
 ## Installation
 
