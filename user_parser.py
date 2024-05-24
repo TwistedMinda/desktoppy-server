@@ -13,10 +13,10 @@ def add_parser_instructions(prompt, directory):
     f"- Cap your response to 200 characters. \n"
     f"- User folder base path is {directory}. \n"
     f"- Accessible files for reference: {','.join(filenames)}. \n"
-    f"User request: {prompt} \n"
+    f"User request: {prompt}"
 )
-  print("_______________")
-  print("> Instructions:\n", detailed_prompt)
+  print("_______Instructions________")
+  print(detailed_prompt)
   print("_______________")
   return detailed_prompt
 
@@ -32,9 +32,9 @@ def add_file_action_instructions(action, prompt, directory, file_path):
     f"Current file content: {file_content} \n"
     f"Initial user request: {prompt}"
 )
-  print(f"_______________ [{file_path}]")
-  print(f"> Instructions File:\n", detailed_prompt)
-  print("_______________\n\n")
+  print(f"_______[Instructions {file_path}]________")
+  print(detailed_prompt)
+  print("_______________")
   return detailed_prompt
 
 def extract_prompt_actions(prompt, directory):
