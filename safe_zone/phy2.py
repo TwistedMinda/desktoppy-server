@@ -7,7 +7,7 @@ model = AutoModelForCausalLM.from_pretrained("microsoft/phi-2", torch_dtype="aut
 tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", trust_remote_code=True)
 
 inputs = tokenizer('''
-  What do you think about yourself?
+  wow incredible it works
 ''', return_tensors="pt", return_attention_mask=False)
 
 outputs = model.generate(**inputs, max_length=200)
