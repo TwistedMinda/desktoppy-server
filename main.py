@@ -1,7 +1,6 @@
 import argparse
-from lama import stream_image_to_text
-from actions import dispatch_actions
-from user_parser import add_parser_instructions, extract_prompt_actions
+from model import *
+from user_parser import *
 
 directory = "C:/Users/Julien/projects/ai/safe_zone/"
 
