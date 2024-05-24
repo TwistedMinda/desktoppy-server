@@ -1,27 +1,26 @@
 from model import *
 from files_manip import *
 import json
-import pprint
 
 def add_parser_instructions(prompt, directory):
   filenames = get_all_filenames(directory)
   detailed_prompt = (
-    f"You are an exceptional and forgiving parser. Your task is to extract the actions, files involved, and a summary of the action from the user request. \n"
+    f"You are an exceptional and forgiving parser. Your task is to extract the actions and files involved from the user request. \n"
     f"Respond only with a valid JSON. Double-check its validity meticulously. Do not include any code blocks. Your response should be like a real API. \n"
     f"1. 'response': Provide a clean response confirming that the requested actions have been applied. \n"
-    f"2. 'actions': An array of objects, each with an 'action' key containing one of ['create', 'delete', 'modify'], the associated 'filePath', and a 'query' key summarizing the action that will be done in the future, conserve all important informations. \n"
+    f"2. 'actions': An array of objects, each with an 'action' key containing one of ['create', 'delete', 'modify'] and the associated 'filePath'. \n"
     f"Other rules: \n"
     f"- Cap your response to 200 characters. \n"
     f"- User folder base path is {directory}. \n"
     f"- Accessible files for reference: {','.join(filenames)}. \n"
     f"User request: {prompt}"
 )
-  # print("_______Instructions________")
-  # print(detailed_prompt)
-  # print("_______________")
+  print("_______Instructions________")
+  print(detailed_prompt)
+  print("_______________")
   return detailed_prompt
 
-def add_file_action_instructions(action, query, file_path):
+def add_file_action_instructions(action, prompt, directory, file_path):
   file_content = read_file(file_path)
   detailed_prompt = (
     f"You have been entrusted with a specialized task. Your first task is to extract the specific context about the file at {file_path} from the initial user request and provided content. \n"
@@ -31,11 +30,11 @@ def add_file_action_instructions(action, query, file_path):
     f"If the content is code, BE SURE to not include unrequested unit testing. \n"
     f"Focus exclusively on the specified file and disregard any other files or user requests. \n"
     f"Current file content: {file_content} \n"
-    f"Initial user request: {query}"
+    f"Initial user request: {prompt}"
 )
-  # print(f"_______[Instructions {file_path}]________")
-  # print(detailed_prompt)
-  # print("_______________")
+  print(f"_______[Instructions {file_path}]________")
+  print(detailed_prompt)
+  print("_______________")
   return detailed_prompt
 
 def extract_prompt_actions(prompt, directory):
@@ -51,22 +50,22 @@ def extract_prompt_actions(prompt, directory):
     user_response = "Error with the exchange"
   return (actions, user_response)
 
-def extract_content(query, action, file_path):
-  instructions = add_file_action_instructions(action, query, file_path)
+def extract_content(prompt, directory, action, file_path):
+  instructions = add_file_action_instructions(action, prompt, directory, file_path)
   return get_response(instructions)
 
 def dispatch_actions(prompt, actions, directory):
-  pprint.pprint(actions, width=40, depth=3, indent=2, compact=False)
+  print(actions)
   for action in actions:
     action_type = action.get('action')
     file_path = os.path.join(directory, action.get('filePath', ''))
-    query = action.get('query')
+    
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     if action_type == 'create':
-      content = extract_content(query, action_type, file_path)
+      content = extract_content(prompt, directory, action_type, file_path)
       create_file(file_path, content)
     elif action_type == 'modify':
-      content = extract_content(query, action_type, file_path)
+      content = extract_content(prompt, directory, action_type, file_path)
       modify_file(file_path, content)
     elif action_type == 'delete':
       delete_file(file_path)
