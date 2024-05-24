@@ -1,4 +1,7 @@
 __pycache__/
-venv/
 .vscode/
+venv/
+desk/
 safe_zone/*
+
+.env

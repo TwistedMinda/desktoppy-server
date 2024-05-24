@@ -1,3 +1,4 @@
 ollama
 flask
 flask-cors
+python-dotenv
