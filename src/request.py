@@ -13,16 +13,20 @@ class Request:
     self.actions: Optional[List[Dict]] = []
     self.response: Optional[str] = None
 
-  def parse(self):
+  def parse(self, history: str = ""):
     self.status = "parsing"
-    self.actions = parse_actions(self.prompt, self.directory)
+    self.actions = parse_actions(self.prompt, self.directory, history)
 
-  def execute(self):
+  def execute(self, history: str = ""):
     self.status = "executing"
     try:
       pprint.pprint(self.actions, width=40, depth=3, indent=2, compact=False)
       if (len(self.actions) == 0):
-        self.response = get_response(self.prompt)
+        self.response = get_response((
+          f"Old conversation: {history}\n" if len(history) > 0 else ""
+          f"New user prompt: {self.prompt}\n"
+          f"Your turn to help him!"
+        ))
       else:
         for action in self.actions:
           action_type = action.get('action').strip()

@@ -7,3 +7,9 @@ class Store:
 
   def get_request(self, key):
     return self.requests[key]
+  
+  def get_history(self):
+    history = []
+    for request in self.requests.values():
+      history.append(f"User: {request.prompt}\nAI Agent: {request.response}")
+    return "\n".join(history)

@@ -30,9 +30,11 @@ def run_script():
   file_paths = data.get('file_paths')
   try:
     req = Request(prompt, folder, file_paths)
+    history = store.get_history()
+    print("history", history)
     store.add_request(req.id, req)
-    req.parse()
-    req.execute()
+    req.parse(history)
+    req.execute(history)
     return jsonify(request_id=req.id), 200
   except Exception as e:
     print(e)
@@ -40,7 +42,6 @@ def run_script():
 
 @app.route('/responses', methods=['GET'])
 def get_responses():
-  print("__response")
   try:
     return [store.requests[value].to_dict() for value in store.requests], 200
   except Exception as e:
@@ -55,7 +56,7 @@ def get_status():
     request = store.get_request(request_id)
     return request.to_dict(), 200
   except Exception as e:
-    print(e)
+    print('Global Error', e)
     return jsonify(error=str(e)), 500
 
 
