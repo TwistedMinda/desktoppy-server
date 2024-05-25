@@ -6,6 +6,7 @@ from store import Store
 from request import Request
 from dotenv import load_dotenv
 import os
+import tempfile
 
 # Load .env
 load_dotenv()
@@ -19,21 +20,28 @@ store = Store()
 @app.route('/run-script', methods=['POST'])
 def run_script():
   print("______RUN SCRIPT______")
-  data = request.get_json()
-  folder = base_dir # data.get('folder')
-  prompt = data.get('prompt')
-  file_paths = data.get('file_paths')
-  try:
-    req = Request(prompt, folder, file_paths)
-    history = store.get_history()
-    print("history", history)
-    store.add_request(req.id, req)
-    req.parse(history)
-    req.execute(history)
-    return jsonify(request_id=req.id), 200
-  except Exception as e:
-    print('Global Error', e)
-    return jsonify(error=str(e)), 500
+  folder = base_dir # request.form.get('folder')
+  prompt = request.form.get('prompt')
+  file_paths = []
+  with tempfile.TemporaryDirectory() as temp_dir:
+    for key, file_storage in request.files.items():
+      # Save the file to the temporary directory
+      file_path = os.path.join(temp_dir, file_storage.filename)
+      file_storage.save(file_path)
+      # Append the absolute path to the list
+      file_paths.append(os.path.abspath(file_path))
+    print("paths", file_paths)
+
+    try:
+      req = Request(prompt, folder, file_paths)
+      history = store.get_history()
+      store.add_request(req.id, req)
+      req.parse(history)
+      req.execute(history)
+      return jsonify(request_id=req.id), 200
+    except Exception as e:
+      print('Global Error', e)
+      return jsonify(error=str(e)), 500
 
 @app.route('/responses', methods=['GET'])
 def get_responses():

@@ -1,15 +1,24 @@
 from model import *
 from files import *
+from typing import List
 import json
+
+def format_images_descriptions(image_descriptions: List[str] = []):
+  descriptions = "\n".join(image_descriptions)
+  print("Descriptions", descriptions)
+  return (
+    f"[IMPORTED IMAGES DESCRIPTIONS]\n{descriptions}\n[END OF DESCRIPTIONS]\n"
+  ) if len(descriptions) > 0 else ""
 
 def format_history(history: str):
   return (
-    f"[CURRENT CONVERSATION FOR CONTEXT]\n{history}\n[END OF CONTEXT]\n"
+    f"[CONVERSATION ALREADY VISIBLE TO THE USER]\n{history}\n[END OF CONVERSATION CONTEXT]\n"
   ) if len(history) > 0 else ""
 
-def add_parser_instructions(prompt: str, directory: str, history: str = ""):
+def add_parser_instructions(prompt: str, directory: str, history: str = "", image_descriptions: List[str] = []):
   filenames = get_all_filenames(directory)
   detailed_prompt = (
+    f"{format_images_descriptions(image_descriptions)}"
     f"{format_history(history)}"
     f"You are an exceptional and forgiving parser. Your are here to detect any action that has to be taken on files, if user is not talking about files just respond a empty array. \n"
     f"Respond only with a valid JSON. Double-check its validity meticulously. Do not include any code blocks. Your response should be like a real API. \n"
@@ -24,14 +33,14 @@ def add_parser_instructions(prompt: str, directory: str, history: str = ""):
     f"- Accessible files for reference: {','.join(filenames)}. \n"
     f"User request: {prompt}"
 )
-  print("_______Instructions________")
-  print(detailed_prompt)
-  print("_______________")
+  # print("_______Instructions________")
+  # print(detailed_prompt)
+  # print("_______________")
   return detailed_prompt
 
-def parse_actions(prompt: str, directory: str, history: str = ""):
+def parse_actions(prompt: str, directory: str, history: str = "", image_descriptions: List[str] = []):
   try:
-    instructions = add_parser_instructions(prompt, directory, history)
+    instructions = add_parser_instructions(prompt, directory, history, image_descriptions)
     json_response = get_response(instructions)
     try:
       return json.loads(json_response)
