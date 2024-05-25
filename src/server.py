@@ -23,6 +23,7 @@ def run_script():
   folder = base_dir # request.form.get('folder')
   prompt = request.form.get('prompt')
   file_paths = []
+  file_names = []
   with tempfile.TemporaryDirectory() as temp_dir:
     for key, file_storage in request.files.items():
       # Save the file to the temporary directory
@@ -30,12 +31,14 @@ def run_script():
       file_storage.save(file_path)
       # Append the absolute path to the list
       file_paths.append(os.path.abspath(file_path))
+      file_names.append(file_storage.filename)
     print("paths", file_paths)
 
     try:
-      req = Request(prompt, folder, file_paths)
-      history = store.get_history()
+      req = Request(prompt, folder, file_names)
       store.add_request(req.id, req)
+      req.load_images_descriptions(file_paths)
+      history = store.get_history()
       req.parse(history)
       req.execute(history)
       return jsonify(request_id=req.id), 200
