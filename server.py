@@ -11,12 +11,12 @@ base_dir = os.getenv("BASE_TEST_DIR")
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/run-script', methods=['GET'])
+@app.route('/run-script', methods=['POST'])
 def run_script():
-  folder = base_dir #request.args.get('folder', default='', type=str)
-  prompt = request.args.get('prompt', default='', type=str)
-  filePaths = request.args.get('filePaths', default='', type=str)
-  
+  data = request.get_json()
+  folder = base_dir # data.get('folder')
+  prompt = data.get('prompt')
+  filePaths = data.get('filePaths')
   try:
     entry(folder, prompt, filePaths)
     return jsonify(str("ok")), 200
