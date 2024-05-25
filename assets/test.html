@@ -20,12 +20,13 @@
         const prompt = document.getElementById('prompt').value;
         const file_paths = document.getElementById('file_paths').value;
         
-        const url = new URL('http://127.0.0.1:5000/run-script');
-        url.searchParams.append('folder', folder);
-        url.searchParams.append('prompt', prompt);
-        url.searchParams.append('file_paths', file_paths);
-
-        fetch(url)
+        fetch('http://127.0.0.1:5000/run-script', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({folder, prompt, file_paths}),
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
