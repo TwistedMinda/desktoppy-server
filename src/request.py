@@ -2,6 +2,7 @@ import uuid
 from typing import List, Dict, Optional
 from parsing import *
 from dispatcher import *
+import pprint
 
 class Request:
   def __init__(self, prompt: str, directory: str, image_paths: List[str]):
@@ -23,9 +24,7 @@ class Request:
       pprint.pprint(self.actions, width=40, depth=3, indent=2, compact=False)
       if (len(self.actions) == 0):
         self.response = get_response((
-          f"[START OF OLD CONVERSATION FOR CONTEXT]\n"
-          f"{history}\n" if len(history) > 0 else ""
-          f"[END OF OLD CONVERSATION]\n"
+          f"{format_history(history)}"
           f"New user prompt: {self.prompt}\n"
           f"Your turn to help him!"
         ))
@@ -39,7 +38,7 @@ class Request:
             # Don't need more interactions with AI
             continue
 
-          content = extract_content(query, action_type, file_path)
+          content = extract_content(action_type, query, file_path)
           if action_type == 'copy':
             copy_file(file_path, content)
           elif action_type == 'move' or action_type == 'rename':
