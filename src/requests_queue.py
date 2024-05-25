@@ -55,9 +55,9 @@ def execute_actions(prompt, actions, directory):
     action_type = action.get('action').strip()
     file_path = os.path.join(directory, action.get('filePath', ''))
     query = action.get('query')
-    # Don't need more interactions with AI
     if action_type == 'delete':
       delete_file(file_path)
+      # Don't need more interactions with AI
       continue
 
     content = extract_content(query, action_type, file_path)
