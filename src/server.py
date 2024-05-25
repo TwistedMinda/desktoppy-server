@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
-from user_parser import *
-from requests_queue import *
+from parsing import *
+from dispatcher import *
 from flask_cors import CORS
+from store import Store
+from request import Request
 from dotenv import load_dotenv
 import os
+import uuid
 
 # Load .env
 load_dotenv()
@@ -12,18 +15,11 @@ base_dir = os.getenv("BASE_TEST_DIR")
 app = Flask(__name__)
 CORS(app)
 
-def run(directory, prompt, image_paths):
-  # Process the prompt
-  (actions, user_response) = parse_actions(prompt, directory)
-  execute_actions(prompt, actions, directory)
-  print('>', user_response)
-
-  # Handle images
-  for image_path in image_paths:
-    stream_image_to_text(image_path)
+store = Store()
 
 @app.route('/run-script', methods=['POST'])
 def run_script():
+  print("______RUN SCRIPT______")
   data = request.get_json()
   folder = base_dir # data.get('folder')
   user_input = (
@@ -32,13 +28,35 @@ def run_script():
     f"Read and summarize the yolo file for me"
   )
   prompt = data.get('prompt')
-  filePaths = data.get('filePaths')
+  file_paths = data.get('file_paths')
   try:
-    run(folder, prompt, filePaths)
-    return jsonify(str("ok")), 200
+    req = Request(prompt, folder, file_paths)
+    req.execute()
+    store.add_request(req.id, req)
+    return jsonify(request_id=req.id), 200
   except Exception as e:
     print(e)
     return jsonify(error=str(e)), 500
+
+@app.route('/responses', methods=['GET'])
+def get_responses():
+  try:
+    return [store.requests[value].to_dict() for value in store.requests], 200
+  except Exception as e:
+    print(e)
+    return jsonify(error=str(e)), 500
+
+@app.route('/get-status', methods=['GET'])
+def get_status():
+  print("______GET STATUS______")
+  request_id = request.args.get('request_id')
+  try:
+    request = store.get_request(request_id)
+    return request.to_dict(), 200
+  except Exception as e:
+    print(e)
+    return jsonify(error=str(e)), 500
+
 
 if __name__ == '__main__':
   app.run(debug=True)

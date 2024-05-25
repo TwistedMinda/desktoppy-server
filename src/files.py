@@ -42,4 +42,4 @@ def copy_file(source_path, destination_path):
       with open(destination_path, 'wb') as f2:
         f2.write(f.read())
   except Exception as e:
-    return str(e)
+    print(e)

@@ -1,6 +1,6 @@
 import pprint
 from model import *
-from files_manip import *
+from files import *
 
 def add_file_action_instructions(action, query, file_path):
   file_content = read_file(file_path)
@@ -45,31 +45,3 @@ def add_file_action_instructions(action, query, file_path):
 def extract_content(query, action, file_path):
   instructions = add_file_action_instructions(action, query, file_path)
   return get_response(instructions)
-
-def execute_actions(prompt, actions, directory):
-  pprint.pprint(actions, width=40, depth=3, indent=2, compact=False)
-  if (len(actions) == 0):
-    stream_response(prompt)
-    return
-  for action in actions:
-    action_type = action.get('action').strip()
-    file_path = os.path.join(directory, action.get('filePath', ''))
-    query = action.get('query')
-    if action_type == 'delete':
-      delete_file(file_path)
-      # Don't need more interactions with AI
-      continue
-
-    content = extract_content(query, action_type, file_path)
-    if action_type == 'copy':
-      copy_file(file_path, content)
-    elif action_type == 'move' or action_type == 'rename':
-      move_file(file_path, content)
-    elif action_type == 'read':
-      print(">", content)
-    elif action_type == 'create':
-      create_file(file_path, content)
-    elif action_type == 'modify':
-      modify_file(file_path, content)
-    else:
-      print(f"Unknown action type: {action_type}")

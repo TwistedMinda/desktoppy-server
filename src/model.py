@@ -1,6 +1,6 @@
 import ollama
 
-def image_to_text(image_path):
+def image_to_text(image_path: str):
   return ollama.chat(
     model="llava",
     messages=[
@@ -12,7 +12,7 @@ def image_to_text(image_path):
     ],
   ).get('message').get('content')
 
-def stream_image_to_text(image_path):
+def stream_image_to_text(image_path: str):
   stream = ollama.chat(
     model="llava",
     messages=[
@@ -27,7 +27,7 @@ def stream_image_to_text(image_path):
   for chunk in stream:
     print(chunk['message']['content'], end='', flush=True)
 
-def get_response(prompt):
+def get_response(prompt: str):
   return ollama.chat(
     model="llama3",
     messages=[
@@ -38,7 +38,7 @@ def get_response(prompt):
     ]
   ).get('message').get('content')
 
-def stream_response(prompt):
+def stream_response(prompt: str):
   stream = ollama.chat(
     model='llama3',
     messages=[{'role': 'user', 'content': prompt}],
