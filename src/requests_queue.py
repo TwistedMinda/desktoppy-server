@@ -58,15 +58,15 @@ def execute_actions(prompt, actions, directory):
     # Simple actions
     if action_type == 'delete':
       delete_file(file_path)
-      return
+      continue
     elif action_type == 'copy':
       content = extract_content(query, action_type, file_path)
       copy_file(file_path, content)
-      return
+      continue
     elif action_type == 'move' or action_type == 'rename':
       content = extract_content(query, action_type, file_path)
       move_file(file_path, content)
-      return
+      continue
     
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     content = extract_content(query, action_type, file_path)
