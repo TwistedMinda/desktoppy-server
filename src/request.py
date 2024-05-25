@@ -17,7 +17,7 @@ class Request:
 
   def parse(self, history: str = ""):
     self.status = "parsing"
-    self.actions = parse_actions(self.prompt, self.directory, history, self.image_names)
+    self.actions = parse_actions(self.prompt, self.directory, history, self.images_descriptions)
 
   def load_images_descriptions(self, image_paths: List[str]):
     if len(image_paths) == 0:
@@ -47,7 +47,7 @@ class Request:
             # Don't need more interactions with AI
             continue
 
-          content = extract_content(action_type, query, file_path)
+          content = extract_content(action_type, query, file_path, self.images_descriptions)
           if action_type == 'copy':
             copy_file(file_path, content)
           elif action_type == 'move' or action_type == 'rename':

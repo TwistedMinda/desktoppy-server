@@ -5,7 +5,6 @@ import json
 
 def format_images_descriptions(image_descriptions: List[str] = []):
   descriptions = "\n".join(image_descriptions)
-  print("Descriptions", descriptions)
   return (
     f"[IMPORTED IMAGES DESCRIPTIONS]\n{descriptions}\n[END OF DESCRIPTIONS]\n"
   ) if len(descriptions) > 0 else ""
