@@ -48,6 +48,16 @@ def get_responses():
     print(e)
     return jsonify(error=str(e)), 500
 
+@app.route('/clear-conversation', methods=['GET'])
+def clear_conversation():
+  try:
+    store.clear()
+    return True, 200
+  except Exception as e:
+    print('Global Error', e)
+    return jsonify(error=str(e)), 500
+
+
 @app.route('/get-status', methods=['GET'])
 def get_status():
   print("______GET STATUS______")

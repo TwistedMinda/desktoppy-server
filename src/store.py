@@ -13,3 +13,6 @@ class Store:
     for request in self.requests.values():
       history.append(f"User: {request.prompt}\nAI Agent: {request.response}")
     return "\n".join(history)
+  
+  def clear(self):
+    self.requests = {}
