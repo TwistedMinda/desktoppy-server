@@ -12,7 +12,7 @@ def add_parser_instructions(prompt, directory):
     f"2. 'actions': An array of objects, each with:'\n"
     f"- query: The details of the action that should be done on the file, or in case of reading what information to extract, conserve all important information! \n"
     f"- filePath: The path of the file to be read, created, modified or deleted. \n"
-    f"- action: one of ['read','create', 'delete', 'modify', 'copy|rename'] \n"
+    f"- action: one of ['read','create', 'delete', 'modify', 'copy', 'rename'] \n"
     f"Other rules: \n"
     f"- User folder base path is {directory}. \n"
     f"- Accessible files for reference: {','.join(filenames)}. \n"
