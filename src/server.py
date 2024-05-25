@@ -6,7 +6,6 @@ from store import Store
 from request import Request
 from dotenv import load_dotenv
 import os
-import uuid
 
 # Load .env
 load_dotenv()
@@ -40,6 +39,7 @@ def run_script():
 
 @app.route('/responses', methods=['GET'])
 def get_responses():
+  print("__response")
   try:
     return [store.requests[value].to_dict() for value in store.requests], 200
   except Exception as e:
