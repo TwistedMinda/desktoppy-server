@@ -9,7 +9,7 @@ def add_parser_instructions(prompt, directory):
     f"Respond only with a valid JSON. Double-check its validity meticulously. Do not include any code blocks. Your response should be like a real API. \n"
     f"1. 'response': Provide a clean response confirming that the requested actions have been applied. \n"
     f"2. 'actions': An array of objects, each with:'\n"
-    f"- query: The details of the action that should be done on the file, or in case of reading what information to extract, conserve all important information! \n"
+    f"- query: The details of the action that should be done on the file, or in case of reading what information to extract, conserve all important information! Should always be at least 20 characters\n"
     f"- filePath: The path of the file to be read, created, modified or deleted. \n"
     f"- action: one of ['read','create', 'delete', 'modify', 'copy', 'rename'] \n"
     f"Other rules: \n"

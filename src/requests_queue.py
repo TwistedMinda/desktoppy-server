@@ -55,22 +55,17 @@ def execute_actions(prompt, actions, directory):
     action_type = action.get('action').strip()
     file_path = os.path.join(directory, action.get('filePath', ''))
     query = action.get('query')
-    # Simple actions
+    # Don't need more interactions with AI
     if action_type == 'delete':
       delete_file(file_path)
       continue
-    elif action_type == 'copy':
-      content = extract_content(query, action_type, file_path)
-      copy_file(file_path, content)
-      continue
-    elif action_type == 'move' or action_type == 'rename':
-      content = extract_content(query, action_type, file_path)
-      move_file(file_path, content)
-      continue
-    
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
     content = extract_content(query, action_type, file_path)
-    if action_type == 'read':
+    if action_type == 'copy':
+      copy_file(file_path, content)
+    elif action_type == 'move' or action_type == 'rename':
+      move_file(file_path, content)
+    elif action_type == 'read':
       print(">", content)
     elif action_type == 'create':
       create_file(file_path, content)
