@@ -44,11 +44,10 @@ class Request:
           elif action_type == 'move' or action_type == 'rename':
             move_file(file_path, content)
           elif action_type == 'read':
-            res = read_file(file_path)
             if self.response is None:
-              self.response = res
+              self.response = content
             else:
-              self.response += f"\n\n{res}"
+              self.response += f"\n{content}"
           elif action_type == 'create':
             create_file(file_path, content)
           elif action_type == 'modify':

@@ -47,7 +47,7 @@ def get_responses():
 def clear_conversation():
   try:
     store.clear()
-    return True, 200
+    return jsonify(True), 200
   except Exception as e:
     print('Error', e)
     return jsonify(error=str(e)), 500
