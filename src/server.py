@@ -21,11 +21,6 @@ def run_script():
   print("______RUN SCRIPT______")
   data = request.get_json()
   folder = base_dir # data.get('folder')
-  user_input = (
-    f"Modify file phy2.py to change the prompt inside the tokenizer by string 'wow incredible it works'\n"
-    f"Create file test/lol.py and write a python script that prints a word that makes us laugh\n"
-    f"Read and summarize the yolo file for me"
-  )
   prompt = data.get('prompt')
   file_paths = data.get('file_paths')
   try:
@@ -37,7 +32,7 @@ def run_script():
     req.execute(history)
     return jsonify(request_id=req.id), 200
   except Exception as e:
-    print(e)
+    print('Global Error', e)
     return jsonify(error=str(e)), 500
 
 @app.route('/responses', methods=['GET'])
@@ -45,16 +40,16 @@ def get_responses():
   try:
     return [store.requests[value].to_dict() for value in store.requests], 200
   except Exception as e:
-    print(e)
+    print('Error', e)
     return jsonify(error=str(e)), 500
 
-@app.route('/clear-conversation', methods=['GET'])
+@app.route('/clear-conversation', methods=['POST'])
 def clear_conversation():
   try:
     store.clear()
     return True, 200
   except Exception as e:
-    print('Global Error', e)
+    print('Error', e)
     return jsonify(error=str(e)), 500
 
 
@@ -66,7 +61,7 @@ def get_status():
     request = store.get_request(request_id)
     return request.to_dict(), 200
   except Exception as e:
-    print('Global Error', e)
+    print('Error', e)
     return jsonify(error=str(e)), 500
 
 
