@@ -30,8 +30,9 @@ def run_script():
   file_paths = data.get('file_paths')
   try:
     req = Request(prompt, folder, file_paths)
-    req.execute()
     store.add_request(req.id, req)
+    req.parse()
+    req.execute()
     return jsonify(request_id=req.id), 200
   except Exception as e:
     print(e)

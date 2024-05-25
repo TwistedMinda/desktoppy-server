@@ -10,8 +10,12 @@ class Request:
     self.directory = directory
     self.image_paths = image_paths
     self.status = "pending"
-    self.actions = parse_actions(prompt, directory)
+    self.actions: Optional[List[Dict]] = []
     self.response: Optional[str] = None
+
+  def parse(self):
+    self.status = "parsing"
+    self.actions = parse_actions(self.prompt, self.directory)
 
   def execute(self):
     self.status = "executing"
@@ -35,14 +39,19 @@ class Request:
           elif action_type == 'move' or action_type == 'rename':
             move_file(file_path, content)
           elif action_type == 'read':
-            print(">", content)
+            res = read_file(file_path)
+            if self.response is None:
+              self.response = res
+            else:
+              self.response += f"\n\n{res}"
           elif action_type == 'create':
             create_file(file_path, content)
           elif action_type == 'modify':
             modify_file(file_path, content)
           else:
             print(f"Unknown action type: {action_type}")
-        self.response = f"Actions executed ({len(self.actions)})"
+        if self.response is None:
+          self.response = f"Actions executed ({len(self.actions)})"
       self.status = "completed"
     except Exception as e:
       print("Execution error", e)
