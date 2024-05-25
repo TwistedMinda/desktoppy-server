@@ -23,7 +23,9 @@ class Request:
       pprint.pprint(self.actions, width=40, depth=3, indent=2, compact=False)
       if (len(self.actions) == 0):
         self.response = get_response((
-          f"Old conversation: {history}\n" if len(history) > 0 else ""
+          f"[START OF OLD CONVERSATION FOR CONTEXT]\n"
+          f"{history}\n" if len(history) > 0 else ""
+          f"[END OF OLD CONVERSATION]\n"
           f"New user prompt: {self.prompt}\n"
           f"Your turn to help him!"
         ))
