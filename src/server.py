@@ -32,7 +32,6 @@ def run_script():
       # Append the absolute path to the list
       file_paths.append(os.path.abspath(file_path))
       file_names.append(file_storage.filename)
-    print("paths", file_paths)
 
     try:
       req = Request(prompt, folder, file_names)
