@@ -43,10 +43,14 @@ def parse_actions(prompt: str, directory: str, history: str = "", image_descript
   try:
     instructions = add_parser_instructions(prompt, directory, history, image_descriptions)
     json_response = get_response(instructions)
-    try:
-      return json.loads(json_response)
-    except json.JSONDecodeError as e:
-      print(f"JSON Format: {e}", json_response)
+    return parse_json(json_response)
   except Exception as e:
     print(f"Parsing Error: {e}")
   return []
+
+def parse_json(value: str):
+  try:
+    return json.loads(value.strip())
+  except json.JSONDecodeError as e:
+    print(f"JSON Error: {e}", value)
+  return None
