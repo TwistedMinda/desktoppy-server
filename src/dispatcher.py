@@ -3,7 +3,6 @@ from files import *
 from parsing import *
 
 def add_file_action_instructions(action: str, query: str, file_path: str, history: str = "", image_descriptions: List[str] = []):
-  file_content = read_file(file_path)
   old_conversation = format_history(history)
   img_desc = format_images_descriptions(image_descriptions)
 
@@ -16,6 +15,7 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
       f"Do not confirm when you're done. DO NOT say anything, no commentary, no explanations, no code-blocks, do not use ``` or any similar syntax. You only give the file content\n"
     )
   elif action == 'read':
+    file_content = read_file(file_path)
     return (
       f"{img_desc}"
       f"{old_conversation}"
@@ -24,7 +24,8 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
       f"User request: {query}"
     )
   elif action == 'modify':
-    return (
+   file_content = read_file(file_path)
+   return (
       f"{img_desc}"
       f"{old_conversation}"
       f"Your first task is to modify the file at {file_path} to fulfill user request. \n"

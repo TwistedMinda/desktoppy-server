@@ -41,10 +41,10 @@ You are the FleetManager AI responsible for overseeing this complex task: {user_
 You are asked to find the most intelligent step next that will really be helpful for the task.
 MAKE SURE IT'S ONE-BY-ONE, ONLY GIVE SINGLE-STEP TASKS, TaskBot CANNOT modify multiple files at once.
 You are the master mind of this situation and absolutely have to END (with "status": "finished" and empty "query" in the response) when the task is obviously finished
-Another constraint is that you must be very descriptive because you can't add complicated combo codes in the "query" because it will break the JSON, so be descriptive and trust the next AI
+Another constraint is that you must be very descriptive because you can't add complicated combo codes in the "query" because it will break the JSON, SO MAKE SURE ITS JUST A SIMPLE STRING, so be descriptive and trust the next AI
 Don't ask the TASKbot to give you information like listing, but instead to make actions only.
 
-VERY IMPORTANT: You can only respond with this JSON format, do not say anything else than JSON, like an HTTP API, only respond with the JSON
+YOUR RESPONSE MUST BE FULLY VALID JSON. DO NOT RESPOND ANYTHING ELSE. Double-check its validity meticulously. Do not include any code blocks. Your response should be like a real API.
 {json.dumps({
   "status": "running (OR) finished",
   "context_required": ['file path the task should need as context so he executes the task correctly, can give mutliple'],
@@ -63,6 +63,8 @@ VERY IMPORTANT: You can only respond with this JSON format, do not say anything 
     while status == "running":
       prompt = self.generateIterationPrompt(user_prompt, mission)
       response = parse_json(get_response(prompt))
+      if response.get('error', False):
+        continue
       # print("Fleet Manager", response)
       status = response.get('status', 'running')
       if status == "running":

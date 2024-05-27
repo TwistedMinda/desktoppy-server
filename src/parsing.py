@@ -53,4 +53,4 @@ def parse_json(value: str):
     return json.loads(value.strip())
   except json.JSONDecodeError as e:
     print(f"JSON Error: {e}", value)
-  return None
+  return { "error": "Invalid JSON" }

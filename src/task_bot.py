@@ -32,11 +32,11 @@ Another constraint is that you must be very descriptive because you can't add co
 
 Possible commands are: 'read', 'create', 'delete', 'modify', 'copy', 'move', 'rename'.
 
-VERY IMPORTANT: You can only respond with this JSON format, do not say anything else than JSON, like an HTTP API, only respond with the JSON
+YOUR RESPONSE MUST BE FULLY VALID JSON. DO NOT RESPOND ANYTHING ELSE. Double-check its validity meticulously. Do not include any code blocks. Your response should be like a real API.
 {json.dumps({
   "done": True,
   "commands": [
-    { "action": "create", "filePath": "path/to/file", "query": "The query for the content of the file given to a smart AI" }
+    { "action": "create", "filePath": "path/to/file", "query": "(STRING) The query for the content of the file given to a smart AI" }
   ],
   "response_to_fleet_master": "response to the fleet master on the executed action"
 })}
@@ -48,6 +48,8 @@ VERY IMPORTANT: You can only respond with this JSON format, do not say anything 
   def execute(self, user_prompt: str, manager_query: str):
     prompt = self.generatePrompt(user_prompt, manager_query)
     response = parse_json(get_response(prompt))
+    if response.get('error', False):
+      return "I'm sorry, I couldn't execute the task correctly."
     for value in response.get('commands'):
       print("TaskBot executes: ", value)
       action = value.get('action')
