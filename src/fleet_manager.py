@@ -2,6 +2,7 @@ import json
 from model import *
 from parsing import *
 from task_bot import TaskBot
+from files import *
 
 class FleetManager:
 
@@ -22,14 +23,16 @@ Rules:
 - IT MUST BE A LIST OF COMMA SEPERATED TASKS WITHOUT MUCH DETAILS, IT WILL BE DONE IN ITERATIONS
 - ONLY RESPOND WITH THE MISSION
 
-User base directory: {self.user_directory}
-User Mission: {user_prompt}
+- User base directory: {self.user_directory}
+- User Mission: {user_prompt}
     """
     return prompt
 
   def generateIterationPrompt(self, user_prompt: str, mission: str):
+    filenames = get_all_filenames(self.user_directory)
     prompt = f"""
-User base directory: {self.user_directory}
+- User base directory: {self.user_directory}
+- Accessible files for reference: {','.join(filenames)}. \n"
 [CONVERSATION HISTORY]
 {self.conversation_history}
 [END OF CONVERSATION HISTORY]
@@ -39,6 +42,7 @@ You are asked to find the most intelligent step next that will really be helpful
 MAKE SURE IT'S ONE-BY-ONE, ONLY GIVE SINGLE-STEP TASKS, TaskBot CANNOT modify multiple files at once.
 You are the master mind of this situation and absolutely have to END (with "status": "finished" and empty "query" in the response) when the task is obviously finished
 Another constraint is that you must be very descriptive because you can't add complicated combo codes in the "query" because it will break the JSON, so be descriptive and trust the next AI
+Don't ask the TASKbot to give you information like listing, but instead to make actions only.
 
 VERY IMPORTANT: You can only respond with this JSON format, do not say anything else than JSON, like an HTTP API, only respond with the JSON
 {json.dumps({

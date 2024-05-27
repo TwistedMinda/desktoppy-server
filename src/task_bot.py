@@ -2,6 +2,7 @@ import json
 from model import *
 from parsing import *
 from dispatcher import *
+from files import *
 
 class TaskBot:
 
@@ -12,6 +13,7 @@ class TaskBot:
     self.user_directory = directory
 
   def generatePrompt(self, user_prompt: str, manager_query: str):
+    filenames = get_all_filenames(self.user_directory)
     prompt = f"""
 You are TaskBot AI, designed to execute specific commands with minimal context. 
 You will receive a detailed query from the Fleet Master AI along with the 
@@ -21,11 +23,14 @@ You are also intelligent, you must refuse any task that deviate from the initial
 But small limitation, for writing into files, you have to make the request in a single line that you add into the "query" key in the response, and it will be forwarded to an as-intelligent-as-you AI to generate the content inside, but you are to make a very smart description so it can do its work.
 Another constraint is that you must be very descriptive because you can't add complicated combo codes in the query because it will break the JSON, so be descriptive and trust the next AI
 
-User base directory: {self.user_directory}
+- User base directory: {self.user_directory}
+- Accessible files for reference: {','.join(filenames)}. \n"
 
 [COMMAND RECEIVED FROM FLEET MASTER]
 {manager_query}
 [END OF COMMAND RECEIVED FROM FLEET MASTER]
+
+Possible commands are: 'read', 'create', 'delete', 'modify', 'copy', 'move', 'rename'.
 
 VERY IMPORTANT: You can only respond with this JSON format, do not say anything else than JSON, like an HTTP API, only respond with the JSON
 {json.dumps({
@@ -36,10 +41,6 @@ VERY IMPORTANT: You can only respond with this JSON format, do not say anything 
   "response_to_fleet_master": "response to the fleet master on the executed action"
 })}
 
-Possible commands are: 'read', 'create', 'delete', 'modify', 'copy', 'move', 'rename'.
-
-Your goal is to execute the given command accurately, provide necessary feedback 
-for the next steps, and indicate if more context is required.
     """
 
     return prompt
@@ -63,10 +64,7 @@ for the next steps, and indicate if more context is required.
       elif action == 'move' or action == 'rename':
         move_file(file_path, content)
       elif action == 'read':
-        if self.response is None:
-          self.response = content
-        else:
-          self.response += f"\n{content}"
+        return content
       elif action == 'create':
         create_file(file_path, content)
       elif action == 'modify':
