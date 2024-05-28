@@ -5,21 +5,22 @@ from parsing import *
 def add_file_action_instructions(action: str, query: str, file_path: str, history: str = "", image_descriptions: List[str] = []):
   old_conversation = format_history(history)
   img_desc = format_images_descriptions(image_descriptions)
-
   if action == 'create':
     return (
       f"{img_desc}"
       f"{old_conversation}"
-      f"Your first task is to create a new file at {file_path} to fulfill user request. \n"
+      f"You were ordered to create a new file at {file_path} to fulfill user request. \n"
       f"Respond ONLY with the file content to be saved. \n"
       f"Do not confirm when you're done. DO NOT say anything, no commentary, no explanations, no code-blocks, do not use ``` or any similar syntax. You only give the file content\n"
+      f"User request: {query}"
     )
   elif action == 'read':
     file_content = read_file(file_path)
     return (
       f"{img_desc}"
       f"{old_conversation}"
-      f"Your first task is to read the file at {file_path} and extract the specific context. \n"
+      f"You were ordered to read the file at {file_path} and respond the to the query using the context content. \n"
+      f"DO NOT RESPOND WITH THE FILE CONTENT. \n"
       f"Current file content: {file_content} \n"
       f"User request: {query}"
     )
@@ -28,7 +29,7 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
    return (
       f"{img_desc}"
       f"{old_conversation}"
-      f"Your first task is to modify the file at {file_path} to fulfill user request. \n"
+      f"You were ordered to modify the file at {file_path} to fulfill user request. \n"
       f"Do not confirm when you're done. DO NOT say anything, no commentary, no explanations, no code-blocks, do not use ``` or any similar syntax. You only give the file content\n"
       f"Current file content: {file_content} \n"
       f"User request: {query}"
@@ -38,7 +39,7 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
     return (
       f"{img_desc}"
       f"{old_conversation}"
-      f"Your first task is to move the file at {file_path} to fulfill user request. \n"
+      f"You were ordered to move the file at {file_path} to fulfill user request. \n"
       f"You must ONLY respond with the destination file AS SIMPLE STRING. \n"
       f"User request: {query}"
     )
@@ -46,10 +47,11 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
     return (
       f"{img_desc}"
       f"{old_conversation}"
-      f"Your first task is to copy the file at {file_path} to fulfill user request. \n"
+      f"You were ordered to copy the file at {file_path} to fulfill user request. \n"
       f"You must ONLY respond with the destination file AS SIMPLE STRING. \n"
       f"User request: {query}"
     )
+  file_content = read_file(file_path)
   return (
     f"{img_desc}"
     f"{old_conversation}"
