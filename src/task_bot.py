@@ -35,6 +35,6 @@ class TaskBot:
       elif action == 'modify':
         modify_file(file_path, content)
       else:
-        print(f"Unknown action type: {action}, You are about to get Fired. Are you repeating tasks? You have to re-assess where you are in the plan")
+        print(f"Unknown action type: {action}, Don't hesitate to end the mission to not make more harm.")
 
     return f"I have completed the task."

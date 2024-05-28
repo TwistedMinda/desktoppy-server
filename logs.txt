@@ -1,0 +1,26 @@
+1. Create a new file named "poem1.txt" in the "./poem" folder.
+2. Write the following content into the newly created file: "The moon is full, the night is still, my heart beats for you alone."
+3. Create a new file named "poem2.txt" in the "./poem" folder.
+4. Write the following content into the newly created file: "In this world of endless strife, I find my peace with your life."
+5. Create a new file named "poem3.txt" in the "./poem" folder.
+6. Write the following content into the newly created file: "You are the sun that lights my day, and the stars that guide me on my way."
+
+TOTAL: 6
+> [FleetManager] 
+    [STEP 1] Starting the mission by creating the first poem file.
+    [COMMANDS [{"action": "create", "filePath": "./poem/poem1.txt", "query": "The moon is full, the night is still, my heart beats for you alone."}]]
+> [TaskBot] I have completed the task.
+[SHOULD NOW MOVE TO STEP 2]
+
+> [FleetManager] 
+    [STEP 2] TaskBot has completed the first task successfully. The current step is now at plan_step 2.
+    [COMMANDS [{"action": "create", "filePath": "./poem/poem2.txt", "query": "In this world of endless strife, I find my peace with your life."}]]
+> [TaskBot] I have completed the task.
+[SHOULD NOW MOVE TO STEP 3]
+
+> [FleetManager] 
+    [STEP 3] Two tasks have been completed successfully so far, and it's time to move on to the third task.
+    [COMMANDS [{"action": "create", "filePath": "./poem/poem3.txt", "query": "You are the sun that lights my day, and the stars that guide me on my way."}]]
+> [TaskBot] I have completed the task.
+[SHOULD NOW MOVE TO STEP 4]
+

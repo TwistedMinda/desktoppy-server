@@ -17,7 +17,6 @@ class Request:
 
   def parse(self, history: str = ""):
     self.status = "parsing"
-    self.actions = parse_actions(self.prompt, self.directory, history, self.images_descriptions)
 
   def load_images_descriptions(self, image_paths: List[str]):
     if len(image_paths) == 0:

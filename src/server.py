@@ -66,18 +66,5 @@ def clear_conversation():
     print('Error', e)
     return jsonify(error=str(e)), 500
 
-
-@app.route('/get-status', methods=['GET'])
-def get_status():
-  print("______GET STATUS______")
-  request_id = request.args.get('request_id')
-  try:
-    request = store.get_request(request_id)
-    return request.to_dict(), 200
-  except Exception as e:
-    print('Error', e)
-    return jsonify(error=str(e)), 500
-
-
 if __name__ == '__main__':
   app.run(debug=True)
