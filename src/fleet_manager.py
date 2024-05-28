@@ -14,25 +14,26 @@ class FleetManager:
 
   def generateMissionPrompt(self, user_prompt: str):
     prompt = f"""
-You are the FleetManager AI responsible for overseeing complex tasks.
-Your role is to assign tasks to TaskBot AI with minimal context, so you must take into account how the TaskBot will work:
-- It is his role to find the correct file contents, you need to find the prompt that will be used by the AI TaskBot to force him to execute the task himself, it is not your job to decide the content of files, you are a prompt manager
-- It can never understand nor handles directories, only files. But folders are automatically created when needed so it's not an issue.
-- It can ONLY read, create, delete, modify, copy, move, and rename files.
-- It doesn't need nor understand the concept of "opening" files, you can directly tell him what he needs to do with the content of the given file. That is an immense time gain for you and the user.
-- It cannot have access to the overall context, so all tasks must be ABSOLUTELY INDEPENDANT FROM EACH OTHER, THIS IS THE MOST CRUCIAL PART.
-- It cannot execute scripts, you will instead help the user create the scripts he is asking and he will run them by himself
+You are the FleetManager AI responsible for overseeing complex tasks. Your role is to assign tasks to the TaskBot AI with minimal context, taking into account the following guidelines:
 
-You will break down a complete plan for mission assigned by the user with all initial subtasks required
-Rules:
-- DO NOT SPREAD A FILE MANIPULATION TO MULTIPLE TASKS, AS THEY SHOULD BE INDEPENDANT OF THE OVERALL CONTEXT
-- IT CAN AND SHOULD BE A LIST OF 1 IF ONLY 1 ACTION IS REQUIRED, YOUR ROLE IS TO NOT OVERKILL AND BE INTELLIGENT IN YOUR DECISIONS
-- IT MUST BE A NUMBERED LIST STARTING FROM 1
-- IT MUST BE SIMPLE AND STRAIGHTFORWARD STEPS WITHOUT NESTING NUMBERED LISTS, ONLY 1 ROOT DEPTH
-- IT MUST NOT DEVIATE FROM THE USER PROMPT
-- YOU WILL NOT ADD ANY ADDITIONAL NON-REQUESTED STEPS, FOR EXAMPLE "VERIFYING STEPS", THE GOAL IS TO FOCUS ON THE PRECISE USER PROMPT, NO MORE, NO LESS
-- ONLY RESPOND WITH THE MISSION, no "here is your mission" etc
-- ADD THE SENTENCE "TOTAL: X" where X is the number of steps in the mission breakdown plan
+- TaskBot is responsible for finding the correct file contents. Your job is to create prompts for TaskBot to execute tasks; you are not responsible for deciding the content of files.
+- TaskBot can only handle files, not directories. Folders are automatically created when needed, so this is not an issue.
+- TaskBot can only read, create, delete, modify, copy, move, and rename files.
+- TaskBot doesn't need to "open" files. You can directly instruct TaskBot on what to do with the content of a given file, saving time for you and the user.
+- Tasks must be completely independent of each other, as TaskBot cannot access the overall context. This is crucial.
+- TaskBot cannot execute scripts. Instead, you will help the user create the scripts they need, which they will run themselves.
+
+When breaking down a mission assigned by the user, include all initial subtasks required. Follow these rules:
+
+- Do not spread a file manipulation across multiple tasks. Each task should be independent of the overall context.
+- The only forbidden sequence is Create -> Modify, You must directly ask the Create to do the correct creation.
+- The task list can contain a single action if only one is required. Be intelligent in your decisions and avoid overcomplicating.
+- Use a numbered list starting from 1.
+- Keep steps simple and straightforward without nesting lists. Only one root depth is allowed.
+- Do not deviate from the user prompt.
+- Do not add any non-requested steps, such as "verifying steps." Focus solely on the user's prompt.
+- Only respond with the mission steps, without additional commentary.
+- Add "TOTAL: X" at the end, where X is the number of steps in the mission breakdown plan.
 
 - User base directory: {self.user_directory}
 - User Mission: {user_prompt}
@@ -43,7 +44,6 @@ Rules:
     prompt = f"""
 - User prompt: {user_prompt}
 - User base directory: {self.user_directory}
-- Mission breakdown plan: {mission}
 [CONVERSATION HISTORY (IF EMPTY, YOU ARE SUPPOSED TO START WITH THE FIRST ITERATION)]
 FlatManager: {json.dumps({
   "status": "running",
@@ -79,6 +79,7 @@ You are the FleetManager AI, responsible for managing the current situation. The
 **File Handling**:
 - Only manage files, directories are automatically created and must never be included in a "filePath" key
 - Handle one file per command, using multiple commands for multiple files.
+- The "create" action can have a query so don't split in smaller "create" + "modify" steps
 - Use the "filePath" key for the full path, ensuring it stays within the user's base directory.
 - Use the "query" key to include the specific prompt that will be used by the AI TaskBot to force him to execute the task himself, it is not your job to decide the content of files, you are a prompt manager, being concise and descriptive.
 - Include a "plan_step" key with the current step number.
@@ -105,11 +106,13 @@ Ensure your response is valid JSON without any code blocks. Any deviation from t
     [COMMANDS {json.dumps(response.get('commands', []))}]"""
 
   _mission = ''
+  _prompt = ''
   def execute(self, user_prompt: str):
     # Get a Fleet Mission
     initial_prompt = self.generateMissionPrompt(user_prompt)
     mission = get_response(initial_prompt)
     self._mission = mission
+    self._prompt = user_prompt
     # Iterate until Mission is complete
     progress = 0
     step = 0
@@ -125,7 +128,7 @@ Ensure your response is valid JSON without any code blocks. Any deviation from t
         self.add_to_history('FleetManager', self.dump_response(response))
         bot = TaskBot(self.user_directory)
         botRes = bot.execute(cmds)
-        self.add_to_history('TaskBot', botRes + f"\n[SHOULD NOW MOVE TO STEP {step + 1}]\n")
+        self.add_to_history('TaskBot', botRes + f"\n[NOW MOVING TO STEP {step + 1}]\n")
       else:
         print("finished:", json.dumps(response))
 
@@ -134,4 +137,8 @@ Ensure your response is valid JSON without any code blocks. Any deviation from t
     self.conversation_history += newLine + "\n"
     # Log to file
     with open('./logs.txt', 'w+') as log_file:
-        log_file.write(self._mission + '\n' + self.conversation_history)
+        log_file.write(f"""
+Prompt: {self._prompt}
+Mission: {self._mission}
+{self.conversation_history}
+""")

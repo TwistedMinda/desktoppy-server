@@ -1,26 +1,28 @@
-1. Create a new file named "poem1.txt" in the "./poem" folder.
-2. Write the following content into the newly created file: "The moon is full, the night is still, my heart beats for you alone."
-3. Create a new file named "poem2.txt" in the "./poem" folder.
-4. Write the following content into the newly created file: "In this world of endless strife, I find my peace with your life."
-5. Create a new file named "poem3.txt" in the "./poem" folder.
-6. Write the following content into the newly created file: "You are the sun that lights my day, and the stars that guide me on my way."
 
-TOTAL: 6
+Prompt: Create a script "script.py" in the "poems/" folder, the script must convert all files that start with "poem" to text-to-speech as well as the requirements.txt to install the necessar
+Mission: Here is the breakdown plan for the mission:
+
+1. Create a new file "script.py" in the "C:/Users/Julien/projects/ai/safe_zone/poems/" directory.
+2. Copy the existing "requirements.txt" file from its current location to the same "poems/" directory.
+3. Modify the copied "requirements.txt" file to install the necessary dependencies for the script.
+
+TOTAL: 3
 > [FleetManager] 
-    [STEP 1] Starting the mission by creating the first poem file.
-    [COMMANDS [{"action": "create", "filePath": "./poem/poem1.txt", "query": "The moon is full, the night is still, my heart beats for you alone."}]]
+    [STEP 1] Initialized the mission by creating a new script 'script.py' in the 'poems/' folder. The script will convert files that start with 'poem' to text-to-speech and install requirements.txt for necessary packages.
+    [COMMANDS [{"action": "create", "filePath": "C:/Users/Julien/projects/ai/safe_zone/poems/script.py", "query": "Create a Python script named 'script.py' in the 'poems/' folder that converts files starting with 'poem' to text-to-speech and installs requirements.txt."}]]
 > [TaskBot] I have completed the task.
 [SHOULD NOW MOVE TO STEP 2]
 
 > [FleetManager] 
-    [STEP 2] TaskBot has completed the first task successfully. The current step is now at plan_step 2.
-    [COMMANDS [{"action": "create", "filePath": "./poem/poem2.txt", "query": "In this world of endless strife, I find my peace with your life."}]]
+    [STEP 2] The previous step was successful in initializing the script 'script.py' in the 'poems/' folder. The next logical step is to install the necessary packages and dependencies for the script to function correctly.
+    [COMMANDS [{"action": "install", "filePath": "", "query": "Install the required packages and dependencies for the script 'script.py'."}]]
 > [TaskBot] I have completed the task.
 [SHOULD NOW MOVE TO STEP 3]
 
 > [FleetManager] 
-    [STEP 3] Two tasks have been completed successfully so far, and it's time to move on to the third task.
-    [COMMANDS [{"action": "create", "filePath": "./poem/poem3.txt", "query": "You are the sun that lights my day, and the stars that guide me on my way."}]]
+    [STEP 3] Based on the previous steps, it's necessary to execute the script 'script.py' in the 'poems/' folder and convert files that start with 'poem' to text-to-speech. Additionally, install requirements.txt for the necessary packages.
+    [COMMANDS [{"action": "execute", "filePath": "C:/Users/Julien/projects/ai/safe_zone/poems/script.py", "query": "Execute the script 'script.py' and convert files that start with 'poem' to text-to-speech."}]]
 > [TaskBot] I have completed the task.
 [SHOULD NOW MOVE TO STEP 4]
+
 
