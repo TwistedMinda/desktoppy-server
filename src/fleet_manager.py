@@ -25,6 +25,7 @@ You are the FleetManager AI responsible for overseeing complex tasks. Your role 
 
 When breaking down a mission assigned by the user, include all initial subtasks required. Follow these rules:
 
+- Basically we will not accept that you have "and" in your tasks, they must be broken down into small bricks. That is how we work.
 - Do not spread a file manipulation across multiple tasks. Each task should be independent of the overall context.
 - The only forbidden sequence is Create -> Modify, You must directly ask the Create to do the correct creation.
 - The task list can contain a single action if only one is required. Be intelligent in your decisions and avoid overcomplicating.
@@ -44,6 +45,7 @@ When breaking down a mission assigned by the user, include all initial subtasks 
     prompt = f"""
 - User prompt: {user_prompt}
 - User base directory: {self.user_directory}
+- Mission breakdown: {mission}
 [CONVERSATION HISTORY (IF EMPTY, YOU ARE SUPPOSED TO START WITH THE FIRST ITERATION)]
 FlatManager: {json.dumps({
   "status": "running",
@@ -88,7 +90,7 @@ You are the FleetManager AI, responsible for managing the current situation. The
 **Completion**:
 - If the mission is complete, include "progress": 100 in the response.
 
-Ensure your response is valid JSON without any code blocks. Any deviation from these instructions will result in immediate termination.
+Ensure your response is valid JSON without any code blocks. Any deviation from these instructions will result in immediate termination. Especially "Here is my response" or "Notes:"
 {json.dumps({
   "progress": 0,
   "plan_step": 1,
