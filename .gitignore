@@ -5,3 +5,4 @@ desk/
 safe_zone/*
 
 .env
+logs.txt
