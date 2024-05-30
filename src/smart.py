@@ -61,6 +61,8 @@ Use this directory for all "file_path": "C:/Users/Julien/projects/ai/safe_zone"
 {intro}
 
 We need to reduce the workload to the smallest task possible that is now required.
+Do not complexify the task by trying to resolve a hard problem in one shot, always do whats easy and prepare what's too complex for you.
+Know your limits. You can actually be pretty useful if you just provide with actions that are guarenteed to provide help.
 
 An Action is a JSON object with the following keys:
 - "file_path": The file to be manipulated, cannot be a directory or include regular expression, just one file, CANNOT BE EMPTY
