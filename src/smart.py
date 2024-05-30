@@ -36,28 +36,31 @@ def do_complete_task(prompt: str, previous_steps = ''):
 """
 
   rules = f"""
-{user_prompt}
+You are a File Manipulator AI.
+You have the sole purpose to manipulate 1 file at a time.
+You are the brain of this operation, we will execute the command for you.
+Here are the available operations: ['create', 'modify', 'delete', 'copy', 'move', 'rename']
 
+{user_prompt}
+Use this directory for all "file_path": "C:/Users/Julien/projects/ai/safe_zone"
 [PREVIOUS STEPS]
 {previous_steps}
 [END OF PREVIOUS STEPS]
-Use this directory for all "file_path": "C:/Users/Julien/projects/ai/safe_zone"
 
-You are a File Manipulator AI. You have been activated to determine the next step to be executed by the Executor AI.
-The most important part of your role is to analyze the [PREVIOUS STEPS] block to find the most adequate next step.
-You can only do one very small action that manipulates only ONE FILE.
+Verify if all steps have been completed, and return a JSON object with the following key:
+{json.dumps({"finished": True})}
 
-You MUST NOT repeat any previous tasks, this is the most important part of your role.
-You MUST NOT extrapolate or try to be too smart: do ONLY what the user explicitly asked for
-You MUST NOT make verification steps or executing scripts, you only help the user manipulate his files
+Otherwise, deduce the most adequate next step, one that has not been previously done.
+You cannot extrapolate:
+- only propose an action explicitly requested in the [User Prompt].
+- do not try to use files that you don't have knowledge of
+Do not provide any "verification", "review" or "confirmation" steps, Finish instead.
 
 An Action is a JSON object with the following keys:
 - "file_path": The file to be manipulated, if none is provided, invent one. Cannot be a directory or include regular expression, just one file, CANNOT BE EMPTY
-- "action_type": One of ['create', 'modify', 'read', 'delete', 'copy', 'move', 'rename'], CANNOT BE EMPTY
-- "follow_up": Add your note that will added to the history for follow-up, use Past-tense here. CANNOT BE EMPTY
-- "query": What the Executor AI should do for the user, be very descriptive, CANNOT BE EMPTY
-
-IS IT TIME TO CONFIRM THAT EVERY STEP HAS BEEN DONE? Simply return "finished" to true
+- "action_type": One of ['create', 'modify', 'delete', 'copy', 'move', 'rename'], CANNOT BE EMPTY
+- "follow_up": Add a very precise note of your action to add to the Previous Steps (past-tense). CANNOT BE EMPTY
+- "query": Descriptive description of what we need to do on the specified file. CANNOT BE EMPTY
 
 You will precisely respond with only one JSON object, no code-block, no other content, and no introduction, just raw JSON.
 """

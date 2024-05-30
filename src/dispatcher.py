@@ -62,4 +62,7 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
 
 def extract_content(action: str, query: str, file_path: str, history: str = "", image_descriptions: List[str] = []):
   instructions = add_file_action_instructions(action, query, file_path, history, image_descriptions)
-  return get_response(instructions)
+  print("> Manipulating files")
+  response = get_response(instructions)
+  print("> Done manipulating files")
+  return response
