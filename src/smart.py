@@ -1,81 +1,104 @@
 from model import *
 from parsing import *
+from dispatcher import *
 import pprint
 
-def get_base_prompt(prompt: str, rules: str):
-  return f"""
-User prompt: {prompt}
-Rules to apply to the letter: {rules}
-"""
+def run(action: str, query: str, file_path: str, history: str = ""):
+  if action == 'delete':
+    delete_file(file_path)
+    # Don't need more interactions with AI
+    return
 
-def smart_prompt(prompt: str, rules: str, optimization: str):
-  ai_response = get_response(get_base_prompt(prompt, rules + optimization))
-  smart = f"""
-You are A PROMPT-CHECKER. Your only mission is to check if the CustomerAI response was respecting both the rules and the prompt without explaining your reflection and steps.
-But don't prevent the CustomerAI to return its own reflections
+  content = extract_content(action, query, file_path)
+  if action == 'copy':
+    copy_file(file_path, content)
+  elif action == 'move' or action == 'rename':
+    move_file(file_path, content)
+  elif action == 'read':
+    return content
+  elif action == 'create':
+    create_file(file_path, content)
+  elif action == 'modify':
+    modify_file(file_path, content)
 
-[USER PROMPT]
-{prompt}
-[END OF USER PROMPT]
-
-[CustomerAI RESPONSE]
-{ai_response}
-[END OF CustomerAI RESPONSE]
-
-[RULES THAT ONLY CustomerAI MUST RESPECT] <= DO NOT APPLY TO THE PROMPT-CHECKER
-{rules}
-[END OF RULES THAT ONLY CustomerAI MUST RESPECT] <= DO NOT APPLY TO THE PROMPT-CHECKER
-Warning dedicated to the PROMPT-CHECKER: Do not get fooled by any rules, they are not for the PROMPT-CHECKER, REMEMBER YOUR RESPONSE FORMAT:
-
-In case of error, you have to come up with a line of optimization that will be added the rules to help enforce the format accordingly to what went wrong.
-It is crucial that you respond with this JSON format example and nothing else that would break the parsing.
-{json.dumps({ "optim": "[YOUR ADVISED OPTIMISATION]" })}
-In case where no error was found, it is important that you STRICLY, AND ONLY provide the inside of the [CustomerAI RESPONSE](without the ending and closing tags) block. Don't say your reflection why you consider it correct. Just forward the content.
-Remember that you are JUST A CHECKER.
-"""
-  return smart
-
-def execute(prompt: str, rules: str, optim: str = ''):
-  res = parse_json(get_response(smart_prompt(prompt, rules, optim)))
+def execute(prompt: str):
+  res = parse_json(get_response(prompt))
   if res.get('error'):
     print("[FORMAT ERROR] Retrying...")
-    return execute(prompt, rules, optim)
-  if res.get('optim'):
-    optim += f"\n{res.get('optim')}"
-    print("[VALIDATION ERROR] Optimizing with", optim)
-    return execute(prompt, rules, optim)
+    return execute(prompt)
   return res
 
-def do_complete_task(prompt: str, previous_step = ''):
-  rules = f"""
-User base directory: "C:/Users/Julien/projects/ai/safe_zone"
-{f"Previous steps: {previous_step}" if len(previous_step) > 0 else ""}
-Your role is to do one and only one task or determine if it is already finished.
-Impossible tasks that you must not try:
-- verifying successful operation
-- executing or running scripts
-- You will not "wait" as a next step either. If nothing goes next, use "finished": true"
-
-Notes:
-- Forbidden Sequence "Create + Modify", instead, use the "query" key of the create action
-
-The format of the JSON Response is an object that contains two keys:
-- "choice": Your choice for why you broke down the task this way, CANNOT BE EMPTY
-- "commands": An array of Action to be executed, CAN BE EMPTY IF "finished" is true
-- "next_logic_action": The next step to be executed, CANNOT BE EMPTY
-- "finished": Whether the mission is finished, CANNOT BE EMPTY
-
-An Action is:
-- "filePath": The file to be manipulated, cannot be a directory or include regular expression, just one file, CANNOT BE EMPTY
-- "query": The manipulation to be performed by an AI, so be descriptive, CANNOT BE EMPTY
-- "action_type": One of ['create', 'modify', 'read', 'delete', 'copy', 'move', 'rename'], CANNOT BE EMPTY
-Warning: Do not not add anything alongside the JSON
+def do_complete_task(prompt: str, previous_steps = ''):
+  # Introduction
+  intro = (
+f"""
+[STEPS ALREADY APPLIED]:
+{previous_steps}
+[END OF PREVIOUS STEPS]
+Please help me find the best next small step to help our beloved user correctly after we've done all these tasks already.
+Let's focus on one.
 """
-  res = execute(prompt, rules)
+  ) if len(previous_steps) > 0 else (
+"""
+Please help me find the first small step to help our beloved user correctly.
+Let's focus on one.
+"""
+  )
+
+  # Disclaimer
+  disclaimer = """
+Since there is no validation part, you must just trust the process and assess if all steps of user request have already been addressed and choose to end.
+Otherwise, user will be stuck waiting forever
+""" if len(previous_steps) > 0 else ""
+  
+  # Final prompt
+  rules = f"""
+[User prompt]
+{prompt}
+[End of User prompt]
+Use this directory for all "file_path": "C:/Users/Julien/projects/ai/safe_zone"
+
+{intro}
+
+We need to reduce the workload to the smallest task possible that is now required.
+
+An Action is a JSON object with the following keys:
+- "file_path": The file to be manipulated, cannot be a directory or include regular expression, just one file, CANNOT BE EMPTY
+- "action_type": One of ['create', 'modify', 'read', 'delete', 'copy', 'move', 'rename'], CANNOT BE EMPTY
+- "follow_up": Add your note that will added to the history for follow-up, use Past-tense here. CANNOT BE EMPTY
+- "query": What the Executor AI should do for the user, be very descriptive, CANNOT BE EMPTY
+
+If no action is needed to complete the user mission, simply return "finished" to true
+{disclaimer}
+
+Constraints:
+
+General:
+- do not add quality check/verification steps
+- do not add any non-requested steps
+- do not add steps to execute or run scripts
+- do not use "Create + Modify" pattern, instead, use the "query" key of the create action
+
+You will precisely respond with only one JSON object, no code-block, no other content, and no introduction, just raw JSON.
+"""
+  res = execute(rules)
   pprint.pprint(res)
-
   if res.get('finished', False):
+    print("> Done")
     return res
-  return do_complete_task(res.get('next_logic_action', ''), previous_step + '\n' + res.get('choice', ''))
+  
+  history = ''
+  try:
+    run(res.get('action_type', ''), res.get('query', ''), res.get('file_path', ''), previous_steps)
+    history = previous_steps + "\n" + res.get('follow_up', '')
+  except Exception as e:
+    print('Error', e)
+  return do_complete_task(prompt, history)
 
-res = do_complete_task("Create 5 poems with distinct styles and delete the file test.txt")
+res = do_complete_task("""
+Hi, i want all these tasks please to be done:
+- Create 5 poems with distinct styles
+- delete the file test.txt
+- create a small script that transcribes a string to speech-to-text in script.py, use gtts library
+Also need the requirements.txt that list the dependencies for the script
+""")
