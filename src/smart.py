@@ -29,57 +29,34 @@ def execute(prompt: str):
   return res
 
 def do_complete_task(prompt: str, previous_steps = ''):
-  # Introduction
-  intro = (
-f"""
-[STEPS ALREADY APPLIED]:
-{previous_steps}
-[END OF PREVIOUS STEPS]
-Please help me find the best next small step to help our beloved user correctly after we've done all these tasks already.
-Let's focus on one.
-"""
-  ) if len(previous_steps) > 0 else (
-"""
-Please help me find the first small step to help our beloved user correctly.
-Let's focus on one.
-"""
-  )
-
-  # Disclaimer
-  disclaimer = """
-Since there is no validation part, you must just trust the process and assess if all steps of user request have already been addressed and choose to end.
-Otherwise, user will be stuck waiting forever
-""" if len(previous_steps) > 0 else ""
-  
-  # Final prompt
-  rules = f"""
+  user_prompt = f"""
 [User prompt]
 {prompt}
 [End of User prompt]
+"""
+
+  rules = f"""
+{user_prompt}
+
+[PREVIOUS STEPS]
+{previous_steps}
+[END OF PREVIOUS STEPS]
 Use this directory for all "file_path": "C:/Users/Julien/projects/ai/safe_zone"
 
-{intro}
+You are a File Manipulator AI. You have been activated to determine the next step to be executed by the Executor AI.
+The most important part of your role is to analyze the [PREVIOUS STEPS] block to find the most adequate next step.
+You can only do one very small action.
 
-We need to reduce the workload to the smallest task possible that is now required.
-Do not complexify the task by trying to resolve a hard problem in one shot, always do whats easy and prepare what's too complex for you.
-Know your limits. You can actually be pretty useful if you just provide with actions that are guarenteed to provide help.
+You MUST NOT repeat any previous tasks, this is the most important part of your role.
+You MUST NOT extrapolate: What has not been precisely mentioned by the user MUST NOT be done.
 
 An Action is a JSON object with the following keys:
-- "file_path": The file to be manipulated, cannot be a directory or include regular expression, just one file, CANNOT BE EMPTY
+- "file_path": The file to be manipulated, if none is provided, invent one. Cannot be a directory or include regular expression, just one file, CANNOT BE EMPTY
 - "action_type": One of ['create', 'modify', 'read', 'delete', 'copy', 'move', 'rename'], CANNOT BE EMPTY
 - "follow_up": Add your note that will added to the history for follow-up, use Past-tense here. CANNOT BE EMPTY
 - "query": What the Executor AI should do for the user, be very descriptive, CANNOT BE EMPTY
 
-If no action is needed to complete the user mission, simply return "finished" to true
-{disclaimer}
-
-Constraints:
-
-General:
-- do not add quality check/verification steps
-- do not add any non-requested steps
-- do not add steps to execute or run scripts
-- do not use "Create + Modify" pattern, instead, use the "query" key of the create action
+If no adequate action is found, or the user demand has been fulfilled, simply return "finished" to true
 
 You will precisely respond with only one JSON object, no code-block, no other content, and no introduction, just raw JSON.
 """
@@ -91,7 +68,7 @@ You will precisely respond with only one JSON object, no code-block, no other co
   
   history = ''
   try:
-    run(res.get('action_type', ''), res.get('query', ''), res.get('file_path', ''), previous_steps)
+    run(res.get('action_type', ''), res.get('query', ''), res.get('file_path', ''), user_prompt + '\n' + previous_steps)
     history = previous_steps + "\n" + res.get('follow_up', '')
   except Exception as e:
     print('Error', e)
