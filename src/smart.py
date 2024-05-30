@@ -57,7 +57,7 @@ An Action is a JSON object with the following keys:
 - "follow_up": Add your note that will added to the history for follow-up, use Past-tense here. CANNOT BE EMPTY
 - "query": What the Executor AI should do for the user, be very descriptive, CANNOT BE EMPTY
 
-If no adequate action is found, or the user demand has been fulfilled, simply return "finished" to true
+IS IT TIME TO CONFIRM THAT EVERY STEP HAS BEEN DONE? Simply return "finished" to true
 
 You will precisely respond with only one JSON object, no code-block, no other content, and no introduction, just raw JSON.
 """
@@ -77,7 +77,7 @@ You will precisely respond with only one JSON object, no code-block, no other co
 
 res = do_complete_task("""
 Hi, i want all these tasks please to be done:
-- Create 5 poems with distinct styles
+- Create 2 poems with distinct styles
 - delete the file test.txt
 - create a small script that transcribes a string to speech-to-text in script.py, use gtts library
 - Also generate the requirements.txt that list the dependencies for the script

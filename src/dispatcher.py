@@ -33,7 +33,7 @@ def add_file_action_instructions(action: str, query: str, file_path: str, histor
       f"Do not confirm when you're done. DO NOT say anything, no commentary, no explanations, no code-blocks, do not use ``` or any similar syntax. You only give the file content\n"
       f"Current file content: {file_content} \n"
       f"User request: {query}"
-      f"Make sure to really not erase the old content if the user didn't request it, take your time and give back the file content merged correctly with your changes"
+      f"Modification is crucial, user wants you to reflect on what the file needs to changed to, if possible, reuse as much as possible from the initial content."
     )
   elif action == 'move' or action == 'rename':
     return (
