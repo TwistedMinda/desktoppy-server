@@ -22,7 +22,7 @@ def run(action: str, query: str, file_path: str, history: str = ""):
     modify_file(file_path, content)
 
 def execute(prompt: str):
-  res = parse_json(get_response(prompt))
+  res = parse_json(get_response(prompt, 'json_model'))
   if res.get('error'):
     print("[FORMAT ERROR] Retrying...")
     return execute(prompt)
@@ -40,12 +40,15 @@ def do_complete_task(prompt: str, previous_steps = ''):
   if res.get('finished', False):
     print("> Done")
     return res
-  pprint.pprint('>' + res.get('follow_up', ''))
+  path = res.get('file_path', '')
+  follow_up = res.get('follow_up', '')
+  action_type = res.get('action_type', '')
+  print('> [' + action_type + '] ' + follow_up + ' (' + path + ')')
   
   history = ''
   try:
-    run(res.get('action_type', ''), res.get('query', ''), res.get('file_path', ''))
-    history = previous_steps + "\n" + res.get('follow_up', '')
+    run(action_type, res.get('query', ''), path)
+    history = previous_steps + "\n" + follow_up
   except Exception as e:
     print('Error', e)
   return do_complete_task(prompt, history)

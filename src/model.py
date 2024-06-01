@@ -27,9 +27,9 @@ def stream_image_to_text(image_path: str):
   for chunk in stream:
     print(chunk['message']['content'], end='', flush=True)
 
-def get_response(prompt: str, model = 'json_model'):
+def get_response(prompt: str, model = 'llama3'):
   return ollama.chat(
-    model="json_model",
+    model,
     messages=[
       {
         'role': 'user',
