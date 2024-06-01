@@ -1,0 +1,1 @@
+ollama create json_model -f ./model_json.modelfile
