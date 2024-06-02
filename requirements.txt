@@ -1,0 +1,9 @@
+ollama
+flask
+flask-cors
+python-dotenv
+diffusers
+transformers
+accelerate
+-i https://download.pytorch.org/whl/cu117
+torch

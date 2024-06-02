@@ -1,0 +1,14 @@
+__pycache__/
+.vscode/
+venv/
+desk/
+safe_zone/*
+
+images/*
+!images/404.png
+!images/screenshot.png
+
+.env
+logs.txt
+
+reset_history

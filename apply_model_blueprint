@@ -1,0 +1,1 @@
+ollama create desktoppy_model -f ./desktoppy_model.modelfile
