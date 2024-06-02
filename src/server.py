@@ -7,7 +7,6 @@ from request import Request
 from dotenv import load_dotenv
 import os
 import tempfile
-from fleet_manager import FleetManager
 
 # Load .env
 load_dotenv()
