@@ -38,9 +38,6 @@ def run_script():
       req = Request(prompt, folder, file_names)
       store.add_request(req.id, req)
       req.load_images_descriptions(file_paths)
-      manager = FleetManager(folder)
-      manager.execute(req.prompt)
-      return jsonify("success"), 200
       history = store.get_history()
       req.parse(history)
       req.execute(history)
